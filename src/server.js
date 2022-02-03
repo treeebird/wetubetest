@@ -4,6 +4,7 @@ import globalRouter from "./routers/globalRouter";
 import videoRouter from "./routers/videoRouter";
 import userRouter from "./routers/userRouter";
 import "./db";
+import "./models/Video";
 const PORT = 4000;
 
 const app = express();
