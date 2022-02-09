@@ -8,19 +8,23 @@ const handleSearch = (error, videos) => {
 
 export const home = async (req, res) => {
   // Video.find({}, handleSearch);
-  console.log("start");
   const videos = await Video.find({});
-  console.log(videos);
-  console.log("finishied");
   return res.render("home", { pageTitle: "Home", videos : videos});
 };
-export const watch = (req, res) => {
+export const watch = async (req, res) => {
   const { id } = req.params;
-  return res.render("watch", { pageTitle: `Watching: `});
+  console.log(id);
+  const video = await Video.findById(id);
+  console.log(video);
+    return res.render("watch", {video});
+  // const video = await Video.findById(id);
+  // console.log(video);
+  // return res.render("watch", { pageTitle: `Watching: `}, video);
 };
-export const getEdit = (req, res) => {
+export const getEdit = async (req, res) => {
   const { id } = req.params;
-  return res.render("edit", { pageTitle: `Editing:`});
+  const video = await Video.findById(id);
+  return res.render("edit", { pageTitle: `Editing:`, video});
 };
 export const postEdit = (req, res) => {
   const {id } = req.params;
@@ -38,7 +42,9 @@ export const postUpload = async (req, res) => {
     title,
     description,
     createAt: Date.now(),
-    hashtags: hashtags.split(",").map((word) => `#${word}`),
+    hashtags: hashtags
+      .split(",")
+      .map((word) => (word.startsWith("#") ? word : `#${word}`)),
     meta : {
       views: 0,
       rating: 0
