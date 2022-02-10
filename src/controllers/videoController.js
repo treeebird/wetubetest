@@ -38,9 +38,7 @@ export const postEdit = async (req, res) => {
   await Video.findByIdAndUpdate( id, {
     title,
     description,
-    hashtags: hashtags
-      .split(",")
-      .map((word) => (word.startsWith("#") ? word : `#${word}`)),
+    hashtags: Video.formatHashtags(hashtags)
 
   })
   console.log("edit post");
@@ -57,9 +55,7 @@ export const postUpload = async (req, res) => {
     title,
     description,
     createAt: Date.now(),
-    hashtags: hashtags
-      .split(",")
-      .map((word) => (word.startsWith("#") ? word : `#${word}`)),
+    hashtags: Video.formatHashtags(hashtags),
     meta : {
       views: 0,
       rating: 0
