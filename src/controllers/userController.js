@@ -1,6 +1,6 @@
-import { get } from "mongoose";
 import bcrypy from "bcrypt";
-import User from "../models/User"
+import User from "../models/User";
+import fetch from "node-fetch";
 export const getJoin = (req, res) => res.render("getJoin");
 export const postJoin = async (req, res) => {
     const { name, username, email, password, password2, location } = req.body;
@@ -52,3 +52,37 @@ export const postLogin = async (req, res) => {
 }
 export const logout = (req, res) => res.send("Log out");
 export const see = (req, res) => res.send("See User");
+
+export const startGithubLogin = (req, res) => {
+    const baseUrl = "https://github.com/login/oauth/authorize"
+    const config = {
+        client_id: "8423035d4bdf90d4e0e8",
+        allow_signup: false,
+        scope: "read:user user:email"
+    };
+    const params = new URLSearchParams(config).toString();
+    console.log(params);
+    const finalURL = `${baseUrl}?${params}`
+    return res.redirect(finalURL);
+}
+
+export const finishGithubLogin = async(req, res) => {
+    const baseUrl = "https://github.com/login/oauth/access_token"
+    const config = {
+        client_id: process.env.GH_CLIENT,
+        client_secret: process.env.GH_SECRET,
+        code: req.query.code
+    };
+    const params = new URLSearchParams(config).toString();
+    const finalUrl = `${baseUrl}?${params}`;
+    console.log(finalUrl); 
+    const data = await fetch(finalUrl, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+        }
+    });
+    const json = await data.json();
+    console.log(json);
+}
+
